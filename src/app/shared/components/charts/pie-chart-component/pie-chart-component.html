@@ -1,0 +1,5 @@
+
+<p-card *ngFor="let chart of charts" [header]="title"></p-card>
+<div class="card flex justify-center">
+    <p-chart type="pie" [data]="data" [options]="options" class="w-full md:w-[30rem]" />
+</div>

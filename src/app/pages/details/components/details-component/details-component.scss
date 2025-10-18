@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  background-color: var(--surface-ground);
+  min-height: 100%;
+}
+
+p-card {
+  background: var(--surface-card);
+  transition: all 0.2s ease;
+  border-radius: 1.25rem !important;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.p-progressbar .p-progressbar-value {
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+}
+
+h2 {
+  color: #111827;
+  font-weight: 800;
+}

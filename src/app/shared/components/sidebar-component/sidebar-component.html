@@ -1,50 +1,56 @@
-<aside class="sidebar">
-  <div class="logo">
-    <i class="pi pi-wave"></i>
-    <span>Poseidon</span>
+<!-- 🔹 Toggle Button (only visible on small screens) -->
+<button
+  class="lg:hidden fixed top-4 left-4 z-50 bg-gray-800 text-white p-2 rounded-md hover:bg-gray-700"
+  (click)="toggleSidebar()"
+>
+  <i class="pi pi-bars text-xl"></i>
+</button>
+
+<!-- 🔹 Sidebar -->
+<aside
+  class="fixed top-0 left-0 h-screen bg-gray-800 text-white flex flex-col transition-all duration-300 z-40"
+  [class.w-64]="!isCollapsed"
+  [class.w-20]="isCollapsed"
+  [class.-translate-x-full]="isMobileHidden"
+  [class.translate-x-0]="!isMobileHidden"
+>
+  <!-- Logo Section -->
+  <div class="flex items-center justify-between p-4 border-b border-gray-700">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-wave text-blue-400 text-2xl"></i>
+      <span *ngIf="!isCollapsed" class="text-xl font-semibold">Battman</span>
+    </div>
+    <!-- Collapse/Expand Button (hidden on mobile) -->
+    <button
+      class="hidden lg:block text-gray-400 hover:text-white focus:outline-none"
+      (click)="toggleCollapse()"
+    >
+      <i class="pi" [ngClass]="isCollapsed ? 'pi-angle-double-right' : 'pi-angle-double-left'"></i>
+    </button>
   </div>
 
-  <nav class="menu">
-    <h4 class="menu-title">DASHBOARDS</h4>
-    <a class="menu-item active" routerLink="/marketing">
-      <i class="pi pi-chart-bar"></i>
-      <span>Marketing</span>
-    </a>
-    <a class="menu-item" routerLink="/ecommerce">
-      <i class="pi pi-shopping-cart"></i>
-      <span>E-Commerce</span>
-    </a>
-    <a class="menu-item" routerLink="/banking">
-      <i class="pi pi-wallet"></i>
-      <span>Banking</span>
+  <!-- Menu -->
+  <nav class="flex-1 p-4">
+    <h4 *ngIf="!isCollapsed" class="text-gray-400 text-xs mb-2">DASHBOARD</h4>
+
+    <a
+      routerLink="/"
+      routerLinkActive="bg-gray-700"
+      class="menu-item flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-700 transition-colors"
+      (click)="closeOnMobile()"
+    >
+      <i class="pi pi-home text-blue-300"></i>
+      <span *ngIf="!isCollapsed">Home</span>
     </a>
 
-    <h4 class="menu-title">APPS</h4>
-    <a class="menu-item" routerLink="/chat">
-      <i class="pi pi-comments"></i>
-      <span>Chat</span>
-    </a>
-    <a class="menu-item" routerLink="/files">
-      <i class="pi pi-folder"></i>
-      <span>Files</span>
-    </a>
-    <a class="menu-item" routerLink="/mail">
-      <i class="pi pi-envelope"></i>
-      <span>Mail</span>
-    </a>
-
-    <h4 class="menu-title">UI KIT</h4>
-    <a class="menu-item" routerLink="/form-layout">
-      <i class="pi pi-id-card"></i>
-      <span>Form Layout</span>
-    </a>
-    <a class="menu-item" routerLink="/button">
-      <i class="pi pi-circle-fill"></i>
-      <span>Button</span>
-    </a>
-    <a class="menu-item" routerLink="/table">
-      <i class="pi pi-table"></i>
-      <span>Table</span>
+    <a
+      routerLink="/fleet-list"
+      routerLinkActive="bg-gray-700"
+      class="menu-item flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-700 transition-colors mt-2"
+      (click)="closeOnMobile()"
+    >
+      <i class="pi pi-android text-green-300"></i>
+      <span *ngIf="!isCollapsed">Fleet List</span>
     </a>
   </nav>
 </aside>

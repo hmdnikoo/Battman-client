@@ -1,0 +1,78 @@
+<div class="p-6">
+  <!-- 🔹 Page Title and Search Bar -->
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-2xl font-bold text-gray-800">Fleet List</h2>
+    <div class="flex items-center gap-2">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          [(ngModel)]="globalFilter"
+          placeholder="Search robots..."
+          class="p-inputtext-sm"
+        />
+      </span>
+    </div>
+  </div>
+
+  <!-- 🔹 PrimeNG Data Table -->
+  <p-table
+    [value]="robots"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [globalFilterFields]="['id', 'name', 'status']"
+    [filters]="{ global: { value: globalFilter, matchMode: 'contains' } }"
+    [stripedRows]="true"
+    [rowHover]="true"
+    [showGridlines]="true"
+    class="shadow-md rounded-lg overflow-visible"
+  >
+    <!-- ✅ Table Header -->
+    <ng-template pTemplate="header">
+      <tr class="bg-gray-100">
+        <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+        <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="charge">Charge (%) <p-sortIcon field="charge"></p-sortIcon></th>
+        <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+      </tr>
+    </ng-template>
+
+    <!-- ✅ Table Body -->
+    <ng-template pTemplate="body" let-robot let-rowIndex="rowIndex">
+      <tr
+        (click)="goToDetails(robot.id)"
+        class="cursor-pointer"
+        [ngClass]="{
+          'bg-gray-50': rowIndex % 2 === 0,
+          'bg-white': rowIndex % 2 !== 0,
+          'hover:bg-blue-100 transition-colors duration-200': true
+        }"
+      >
+        <td>{{ robot.id }}</td>
+        <td class="font-medium">{{ robot.name }}</td>
+        <td>
+          <div class="flex items-center gap-2">
+            <div class="w-full h-2 rounded bg-gray-200" style="max-width: 80px;">
+              <div class="h-2 rounded bg-blue-500" [style.width.%]="robot.charge"></div>
+            </div>
+            <span>{{ robot.charge }}%</span>
+          </div>
+        </td>
+        <td>
+          <p-tag [value]="robot.status" [severity]="getSeverity(robot.status)"></p-tag>
+        </td>
+      </tr>
+    </ng-template>
+
+    <!-- ✅ Empty Message -->
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4" class="text-center text-gray-400 py-4">
+          No robots found.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

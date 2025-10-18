@@ -1,0 +1,86 @@
+<div class="min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-surface-800 p-10">
+  <!-- 🔹 Top Bar -->
+  <div class="flex items-center justify-between mb-10">
+    <div class="flex items-center gap-3">
+      <button
+        pButton
+        icon="pi pi-arrow-left"
+        label="Back to Fleet"
+        class="p-button-text text-gray-700 hover:text-blue-500 font-medium transition-all duration-200"
+        (click)="goBack()"
+      ></button>
+      <h2 class="text-4xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">
+        Robot Details
+      </h2>
+    </div>
+  </div>
+
+  <!-- 🩵 Row 1: Robot Info + Chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
+    <!-- 🧩 Robot Info Card -->
+    <p-card
+      *ngIf="robot"
+      class="shadow-lg rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-900"
+    >
+      <div class="p-8 space-y-6 text-gray-700 dark:text-gray-200">
+        <div class="flex justify-between">
+          <span class="font-semibold text-gray-500">ID:</span>
+          <span class="font-medium text-gray-800">{{ robot.id }}</span>
+        </div>
+
+        <div class="flex justify-between">
+          <span class="font-semibold text-gray-500">Name:</span>
+          <span class="font-medium text-gray-800">{{ robot.name }}</span>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-gray-500">Status:</span>
+          <p-tag [value]="robot.status" [severity]="getSeverity(robot.status)" class="text-sm"></p-tag>
+        </div>
+
+        <div>
+          <span class="font-semibold text-gray-500 block mb-2">Charge Level:</span>
+          <p-progressBar [value]="robot.charge" [showValue]="false" [style]="{ height: '14px', borderRadius: '6px' }"></p-progressBar>
+          <span class="text-sm text-gray-500 mt-1 block">{{ robot.charge }}%</span>
+        </div>
+
+        <div>
+          <span class="font-semibold text-gray-500 block mb-2">Description:</span>
+          <p class="leading-relaxed text-gray-800 dark:text-gray-300">
+            {{ robot.description }}
+          </p>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- 📊 Placeholder for Chart -->
+    <div
+      class="bg-white dark:bg-surface-900 shadow-md rounded-2xl border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400"
+    >
+      <p class="italic">Chart section will be displayed here...</p>
+    </div>
+  </div>
+
+  <!-- 🩵 Row 2: Another Info + Chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+    <!-- 🧩 Example Secondary Card -->
+    <p-card
+      *ngIf="robot"
+      class="shadow-lg rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-900"
+    >
+      <div class="p-8 space-y-4 text-gray-700 dark:text-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Performance Overview</h3>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+          This section will show performance metrics, mission history, or AI analytics for the selected robot.
+        </p>
+      </div>
+    </p-card>
+
+    <!-- 📊 Second Chart Placeholder -->
+    <div
+      class="bg-white dark:bg-surface-900 shadow-md rounded-2xl border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400"
+    >
+      <p class="italic">Additional analytics or live telemetry chart...</p>
+    </div>
+  </div>
+</div>
