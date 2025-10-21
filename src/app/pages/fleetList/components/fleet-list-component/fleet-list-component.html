@@ -1,78 +1,153 @@
-<div class="p-6">
-  <!-- 🔹 Page Title and Search Bar -->
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-2xl font-bold text-gray-800">Fleet List</h2>
-    <div class="flex items-center gap-2">
-      <span class="p-input-icon-left">
-        <i class="pi pi-search"></i>
-        <input
-          pInputText
-          type="text"
-          [(ngModel)]="globalFilter"
-          placeholder="Search robots..."
-          class="p-inputtext-sm"
-        />
-      </span>
-    </div>
+<div class="p-6 space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-bold text-gray-800">Battery Fleet</h2>
+    <button
+      pButton
+      label="Add Battery"
+      icon="pi pi-plus"
+      class="p-button-success"
+      (click)="openNewBatteryDialog()"
+    ></button>
   </div>
 
-  <!-- 🔹 PrimeNG Data Table -->
+  <div class="flex items-center gap-2">
+    <span class="p-input-icon-left w-full max-w-xs">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        type="text"
+        [(ngModel)]="globalFilter"
+        placeholder="Search batteries..."
+        class="p-inputtext-sm w-full"
+      />
+    </span>
+  </div>
+
   <p-table
-    [value]="robots"
+    [value]="(batteries$ | async) ?? []"
     [paginator]="true"
     [rows]="5"
     [rowsPerPageOptions]="[5, 10, 20]"
-    [globalFilterFields]="['id', 'name', 'status']"
+    [globalFilterFields]="['id', 'nominalVoltage', 'nominalCapacity', 'nominalEnergy', 'createdAt']"
     [filters]="{ global: { value: globalFilter, matchMode: 'contains' } }"
     [stripedRows]="true"
     [rowHover]="true"
     [showGridlines]="true"
     class="shadow-md rounded-lg overflow-visible"
   >
-    <!-- ✅ Table Header -->
     <ng-template pTemplate="header">
       <tr class="bg-gray-100">
-        <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
-        <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
-        <th pSortableColumn="charge">Charge (%) <p-sortIcon field="charge"></p-sortIcon></th>
-        <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+        <th pSortableColumn="id">
+          ID <p-sortIcon field="id"></p-sortIcon>
+        </th>
+        <th pSortableColumn="createdAt">
+          Created At <p-sortIcon field="createdAt"></p-sortIcon>
+        </th>
+        <th pSortableColumn="nominalVoltage">
+          Voltage (V) <p-sortIcon field="nominalVoltage"></p-sortIcon>
+        </th>
+        <th pSortableColumn="nominalCapacity">
+          Capacity (Ah) <p-sortIcon field="nominalCapacity"></p-sortIcon>
+        </th>
+        <th pSortableColumn="nominalEnergy">
+          Energy (Wh) <p-sortIcon field="nominalEnergy"></p-sortIcon>
+        </th>
+        <th>Actions</th>
       </tr>
     </ng-template>
 
-    <!-- ✅ Table Body -->
-    <ng-template pTemplate="body" let-robot let-rowIndex="rowIndex">
+    <ng-template pTemplate="body" let-battery let-rowIndex="rowIndex">
       <tr
-        (click)="goToDetails(robot.id)"
-        class="cursor-pointer"
+        class="cursor-pointer hover:bg-blue-100 transition-colors duration-200"
         [ngClass]="{
           'bg-gray-50': rowIndex % 2 === 0,
-          'bg-white': rowIndex % 2 !== 0,
-          'hover:bg-blue-100 transition-colors duration-200': true
+          'bg-white': rowIndex % 2 !== 0
         }"
+        (click)="goToDetails(battery.id)"
       >
-        <td>{{ robot.id }}</td>
-        <td class="font-medium">{{ robot.name }}</td>
-        <td>
-          <div class="flex items-center gap-2">
-            <div class="w-full h-2 rounded bg-gray-200" style="max-width: 80px;">
-              <div class="h-2 rounded bg-blue-500" [style.width.%]="robot.charge"></div>
-            </div>
-            <span>{{ robot.charge }}%</span>
-          </div>
-        </td>
-        <td>
-          <p-tag [value]="robot.status" [severity]="getSeverity(robot.status)"></p-tag>
+        <td>{{ battery.id }}</td>
+        <td>{{ battery.createdAt | date: 'short' }}</td>
+        <td>{{ battery.nominalVoltage }}</td>
+        <td>{{ battery.nominalCapacity }}</td>
+        <td>{{ battery.nominalEnergy }}</td>
+        <td class="flex gap-2">
+          <button
+            pButton
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-info p-button-sm"
+            (click)="editBattery(battery); $event.stopPropagation()"
+          ></button>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-danger p-button-sm"
+            (click)="deleteBattery(battery.id); $event.stopPropagation()"
+          ></button>
         </td>
       </tr>
     </ng-template>
 
-    <!-- ✅ Empty Message -->
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="4" class="text-center text-gray-400 py-4">
-          No robots found.
+        <td colspan="6" class="text-center text-gray-400 py-4">
+          No batteries found.
         </td>
       </tr>
     </ng-template>
   </p-table>
+
+  <p-dialog
+    header="{{ isEditMode ? 'Update Battery' : 'Add New Battery' }}"
+    [(visible)]="displayDialog"
+    [modal]="true"
+    [closable]="true"
+    [style]="{ width: '400px' }"
+  >
+    <div class="flex flex-col gap-4">
+      <div>
+        <label class="font-medium block mb-1">Nominal Voltage (V)</label>
+        <input
+          pInputText
+          type="number"
+          [(ngModel)]="batteryForm.nominalVoltage"
+          class="w-full"
+        />
+      </div>
+      <div>
+        <label class="font-medium block mb-1">Nominal Capacity (Ah)</label>
+        <input
+          pInputText
+          type="number"
+          [(ngModel)]="batteryForm.nominalCapacity"
+          class="w-full"
+        />
+      </div>
+      <div>
+        <label class="font-medium block mb-1">Nominal Energy (Wh)</label>
+        <input
+          pInputText
+          type="number"
+          [(ngModel)]="batteryForm.nominalEnergy"
+          class="w-full"
+        />
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        label="Cancel"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="closeDialog()"
+      ></button>
+      <button
+        pButton
+        label="{{ isEditMode ? 'Update' : 'Create' }}"
+        icon="pi pi-check"
+        class="p-button-primary"
+        (click)="saveBattery()"
+      ></button>
+    </ng-template>
+  </p-dialog>
 </div>

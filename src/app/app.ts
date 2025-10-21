@@ -13,6 +13,7 @@ import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
+import { TabsModule } from 'primeng/tabs';
 @Component({
   selector: 'app-root',
   imports: [
@@ -29,7 +30,8 @@ import { FormsModule } from '@angular/forms';
     TagModule,
     TableModule,
     InputTextModule,
-    FormsModule
+    FormsModule,
+    TabsModule
 ],
   templateUrl: './app.html',
   styleUrl: './app.scss'

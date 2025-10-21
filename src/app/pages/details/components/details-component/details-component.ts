@@ -5,54 +5,178 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { FormsModule } from '@angular/forms';
+import { TabsModule, TabPanels, Tabs, TabList, TabPanel } from 'primeng/tabs';
+import { BatteryState } from '../../../../interfaces/battery-state';
+import { BatteryStateService } from '../../../../shared/services/battery-state-service';
+import { RecordSessionService } from '../../../../shared/services/record-session-service';
+import { RecordSession } from '../../../../interfaces/record-session ';
 
 @Component({
   selector: 'app-fleet-details',
-  standalone: true, // ✅ makes the component independent (no need for NgModule)
+  standalone: true,
   imports: [
-    CommonModule,        // ✅ required for *ngIf, *ngFor, etc.
-    CardModule,          // ✅ PrimeNG Card component
-    ButtonModule,        // ✅ PrimeNG Button component
-    TagModule,           // ✅ PrimeNG Tag (for status)
-    ProgressBarModule    // ✅ PrimeNG Progress bar (for charge)
+    CommonModule,
+    FormsModule,
+    CardModule,
+    ButtonModule,
+    TagModule,
+    ProgressBarModule,
+    TableModule,
+    TabsModule,
+    TabPanels,
+    Tabs,
+    TabList,
+    TabPanel,
+    DialogModule,
+    InputTextModule,
+    InputNumberModule
   ],
   templateUrl: './details-component.html',
   styleUrls: ['./details-component.scss']
 })
 export class DetailsComponent implements OnInit {
-  robotId: string | null = null; // stores the ID from the route (URL)
-  robot: any = null;             // stores the selected robot data
+  batteryId!: number;
+  states: BatteryState[] = [];
+  sessions: RecordSession[] = [];
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  displayStateDialog = false;
+  displaySessionDialog = false;
+  isEditState = false;
+  isEditSession = false;
 
-  ngOnInit() {
-    // 🔹 Get the robot ID from the route parameter
-    this.robotId = this.route.snapshot.paramMap.get('id');
+  selectedStateId?: number;
+  selectedSessionId?: number;
 
-    // 🔹 Mock data for demonstration (can be replaced with real API data)
-    const mockRobots = [
-      { id: 1, name: 'Robot A', charge: 78, status: 'Active', description: 'Operating in Zone 3' },
-      { id: 2, name: 'Robot B', charge: 45, status: 'Charging', description: 'Docked for recharging' },
-      { id: 3, name: 'Robot C', charge: 90, status: 'Idle', description: 'Ready for next mission' },
-      { id: 4, name: 'Robot D', charge: 22, status: 'Error', description: 'System malfunction detected' }
-    ];
+  stateForm: Partial<BatteryState> = {
+    voltage: 0,
+    current: 0,
+    temperature: 0,
+    status: 'Idle'
+  };
 
-    // 🔹 Find the robot with the same ID
-    this.robot = mockRobots.find(r => r.id.toString() === this.robotId);
+  sessionForm: Partial<RecordSession> = {
+    name: '',
+    description: ''
+  };
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private stateService: BatteryStateService,
+    private sessionService: RecordSessionService
+  ) {}
+
+  ngOnInit(): void {
+    this.batteryId = Number(this.route.snapshot.paramMap.get('id'));
+    this.loadData();
   }
 
-  // 🔹 Returns a color severity for the PrimeNG Tag
-  getSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | null {
-    switch (status) {
-      case 'Active': return 'success';
-      case 'Charging': return 'info';
-      case 'Idle': return 'warn';
-      case 'Error': return 'danger';
-      default: return null;
+  loadData() {
+    this.stateService.getStates(this.batteryId).subscribe({
+      next: (data) => (this.states = data),
+      error: (err) => console.error('Error fetching states:', err)
+    });
+
+    this.sessionService.getSessions(this.batteryId).subscribe({
+      next: (data) => (this.sessions = data),
+      error: (err) => console.error('Error fetching sessions:', err)
+    });
+  }
+
+  openNewStateDialog() {
+    this.isEditState = false;
+    this.displayStateDialog = true;
+    this.stateForm = {
+      voltage: 0,
+      current: 0,
+      temperature: 0,
+      status: 'Idle'
+    };
+  }
+
+  editState(state: BatteryState) {
+    this.isEditState = true;
+    this.displayStateDialog = true;
+    this.selectedStateId = state.id;
+    this.stateForm = { ...state };
+  }
+
+  saveState() {
+    if (this.isEditState && this.selectedStateId !== undefined) {
+      this.stateService.updateState(this.selectedStateId, this.stateForm).subscribe({
+        next: () => {
+          this.loadData();
+          this.displayStateDialog = false;
+        },
+        error: (err) => console.error('Error updating state:', err)
+      });
+    } else {
+      this.stateService.createState(this.batteryId, this.stateForm).subscribe({
+        next: () => {
+          this.loadData();
+          this.displayStateDialog = false;
+        },
+        error: (err) => console.error('Error creating state:', err)
+      });
     }
   }
 
-  // 🔹 Navigate back to the fleet list page
+  deleteState(id: number) {
+    if (confirm('Are you sure you want to delete this state?')) {
+      this.stateService.deleteState(id).subscribe({
+        next: () => this.loadData(),
+        error: (err) => console.error('Error deleting state:', err)
+      });
+    }
+  }
+
+  openNewSessionDialog() {
+    this.isEditSession = false;
+    this.displaySessionDialog = true;
+    this.sessionForm = { name: '', description: '' };
+  }
+
+  editSession(session: RecordSession) {
+    this.isEditSession = true;
+    this.displaySessionDialog = true;
+    this.selectedSessionId = session.id;
+    this.sessionForm = { ...session };
+  }
+
+  saveSession() {
+    if (this.isEditSession && this.selectedSessionId !== undefined) {
+      this.sessionService.updateSession(this.selectedSessionId, this.sessionForm).subscribe({
+        next: () => {
+          this.loadData();
+          this.displaySessionDialog = false;
+        },
+        error: (err) => console.error('Error updating session:', err)
+      });
+    } else {
+      this.sessionService.createSession(this.batteryId, this.sessionForm).subscribe({
+        next: () => {
+          this.loadData();
+          this.displaySessionDialog = false;
+        },
+        error: (err) => console.error('Error creating session:', err)
+      });
+    }
+  }
+
+  deleteSession(id: number) {
+    if (confirm('Are you sure you want to delete this session?')) {
+      this.sessionService.deleteSession(id).subscribe({
+        next: () => this.loadData(),
+        error: (err) => console.error('Error deleting session:', err)
+      });
+    }
+  }
+
   goBack() {
     this.router.navigate(['/fleet-list']);
   }
