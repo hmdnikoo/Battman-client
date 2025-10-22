@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -9,12 +10,13 @@ import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { FormsModule } from '@angular/forms';
 import { TabsModule, TabPanels, Tabs, TabList, TabPanel } from 'primeng/tabs';
-import { BatteryState } from '../../../../interfaces/battery-state';
+
+import { BatteryState} from '../../../../interfaces/battery-state';
 import { BatteryStateService } from '../../../../shared/services/battery-state-service';
 import { RecordSessionService } from '../../../../shared/services/record-session-service';
 import { RecordSession } from '../../../../interfaces/record-session ';
+import { BatteryStatus } from '../../../../types/battery-status';
 
 @Component({
   selector: 'app-fleet-details',
@@ -52,11 +54,13 @@ export class DetailsComponent implements OnInit {
   selectedStateId?: number;
   selectedSessionId?: number;
 
+  availableStatuses: BatteryStatus[] = ['CHARGING', 'DISCHARGING'];
+
   stateForm: Partial<BatteryState> = {
     voltage: 0,
     current: 0,
     temperature: 0,
-    status: 'Idle'
+    status: 'CHARGING'
   };
 
   sessionForm: Partial<RecordSession> = {
@@ -76,7 +80,7 @@ export class DetailsComponent implements OnInit {
     this.loadData();
   }
 
-  loadData() {
+  loadData(): void {
     this.stateService.getStates(this.batteryId).subscribe({
       next: (data) => (this.states = data),
       error: (err) => console.error('Error fetching states:', err)
@@ -88,27 +92,34 @@ export class DetailsComponent implements OnInit {
     });
   }
 
-  openNewStateDialog() {
+  openNewStateDialog(): void {
     this.isEditState = false;
     this.displayStateDialog = true;
     this.stateForm = {
       voltage: 0,
       current: 0,
       temperature: 0,
-      status: 'Idle'
+      status: 'CHARGING'
     };
   }
 
-  editState(state: BatteryState) {
+  editState(state: BatteryState): void {
     this.isEditState = true;
     this.displayStateDialog = true;
     this.selectedStateId = state.id;
     this.stateForm = { ...state };
   }
 
-  saveState() {
+  saveState(): void {
+    const normalizedStatus: BatteryStatus =
+      this.stateForm.status?.toUpperCase() === 'DISCHARGING'
+        ? 'DISCHARGING'
+        : 'CHARGING';
+
+    const payload: Partial<BatteryState> = { ...this.stateForm, status: normalizedStatus };
+
     if (this.isEditState && this.selectedStateId !== undefined) {
-      this.stateService.updateState(this.selectedStateId, this.stateForm).subscribe({
+      this.stateService.updateState(this.selectedStateId, payload).subscribe({
         next: () => {
           this.loadData();
           this.displayStateDialog = false;
@@ -116,7 +127,7 @@ export class DetailsComponent implements OnInit {
         error: (err) => console.error('Error updating state:', err)
       });
     } else {
-      this.stateService.createState(this.batteryId, this.stateForm).subscribe({
+      this.stateService.createState(this.batteryId, payload).subscribe({
         next: () => {
           this.loadData();
           this.displayStateDialog = false;
@@ -126,7 +137,7 @@ export class DetailsComponent implements OnInit {
     }
   }
 
-  deleteState(id: number) {
+  deleteState(id: number): void {
     if (confirm('Are you sure you want to delete this state?')) {
       this.stateService.deleteState(id).subscribe({
         next: () => this.loadData(),
@@ -135,20 +146,20 @@ export class DetailsComponent implements OnInit {
     }
   }
 
-  openNewSessionDialog() {
+  openNewSessionDialog(): void {
     this.isEditSession = false;
     this.displaySessionDialog = true;
     this.sessionForm = { name: '', description: '' };
   }
 
-  editSession(session: RecordSession) {
+  editSession(session: RecordSession): void {
     this.isEditSession = true;
     this.displaySessionDialog = true;
     this.selectedSessionId = session.id;
     this.sessionForm = { ...session };
   }
 
-  saveSession() {
+  saveSession(): void {
     if (this.isEditSession && this.selectedSessionId !== undefined) {
       this.sessionService.updateSession(this.selectedSessionId, this.sessionForm).subscribe({
         next: () => {
@@ -168,7 +179,7 @@ export class DetailsComponent implements OnInit {
     }
   }
 
-  deleteSession(id: number) {
+  deleteSession(id: number): void {
     if (confirm('Are you sure you want to delete this session?')) {
       this.sessionService.deleteSession(id).subscribe({
         next: () => this.loadData(),
@@ -177,7 +188,7 @@ export class DetailsComponent implements OnInit {
     }
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(['/fleet-list']);
   }
 }

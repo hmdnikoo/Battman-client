@@ -1,1 +1,1 @@
-export type BatteryStatus = 'CHARGING' | 'DISCHARGING' | 'IDLE' | string;
+export type BatteryStatus = 'CHARGING' | 'DISCHARGING';
