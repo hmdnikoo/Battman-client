@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  batman-client-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: batman-client-web
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.batmanclient.rule=Host(`localhost`)"
+      - "traefik.http.routers.batmanclient.entrypoints=web"
+      - "traefik.http.services.batmanclient.loadbalancer.server.port=80"
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
