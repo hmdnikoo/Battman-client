@@ -1,21 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
-
 import { BatteryService } from '../../../../shared/services/battery-service';
 import { Battery } from '../../../../interfaces/battery';
 import { PrimengSharedModule } from '../../../../shared/modules/primeng-shared-module';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-fleet-list',
   standalone: true,
-  imports: [
-    PrimengSharedModule
-  ],
+  imports: [PrimengSharedModule],
   templateUrl: './fleet-list-component.html',
   styleUrls: ['./fleet-list-component.scss']
 })
 export class FleetListComponent implements OnInit {
+  @ViewChild('batteryTable') batteryTable!: Table;
+
   globalFilter = '';
   batteries$!: Observable<Battery[]>;
   displayDialog = false;
@@ -28,19 +28,19 @@ export class FleetListComponent implements OnInit {
     nominalEnergy: 0
   };
 
-  constructor(
-    private router: Router,
-    private batteryService: BatteryService
-  ) {}
+  constructor(private router: Router, private batteryService: BatteryService) {}
 
   ngOnInit(): void {
     this.loadBatteries();
   }
 
   loadBatteries(): void {
-    this.batteries$ = this.batteryService.getAll().pipe(
-      map((batteries) => batteries ?? [])
-    );
+    this.batteries$ = this.batteryService.getAll().pipe(map((batteries) => batteries ?? []));
+  }
+
+  onGlobalFilter(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.batteryTable.filterGlobal(input.value, 'contains');
   }
 
   goToDetails(id: number): void {

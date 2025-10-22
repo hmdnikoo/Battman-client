@@ -9,18 +9,37 @@
     </p-tablist>
 
     <p-tabpanels>
+      <!-- 🔋 Battery States -->
       <p-tabpanel value="0">
-        <div class="flex justify-end mb-4">
+        <div class="flex justify-between items-center mb-4">
+          <span class="p-input-icon-left max-w-xs">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              placeholder="Search states..."
+              (input)="onStateFilter($event)"
+              class="p-inputtext-sm w-full"
+            />
+          </span>
+
           <button
             pButton
             label="Add State"
             icon="pi pi-plus"
-            (click)="openNewStateDialog()"
             class="p-button-success"
+            (click)="openNewStateDialog()"
           ></button>
         </div>
 
-        <p-table [value]="states" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+        <p-table
+          #stateTable
+          [value]="states"
+          [paginator]="true"
+          [rows]="5"
+          [globalFilterFields]="['status', 'voltage', 'current', 'temperature']"
+          responsiveLayout="scroll"
+        >
           <ng-template pTemplate="header">
             <tr>
               <th>ID</th>
@@ -45,40 +64,45 @@
               <td>{{ s.current }}</td>
               <td>{{ s.temperature }}</td>
               <td class="flex gap-2">
-                <button
-                  pButton
-                  icon="pi pi-pencil"
-                  class="p-button-rounded p-button-info p-button-sm"
-                  (click)="editState(s)"
-                  pTooltip="Edit State"
-                  tooltipPosition="top"
-                ></button>
-                <button
-                  pButton
-                  icon="pi pi-trash"
-                  class="p-button-rounded p-button-danger p-button-sm"
-                  (click)="confirmDeleteState(s.id)"
-                  pTooltip="Delete State"
-                  tooltipPosition="top"
-                ></button>
+                <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info p-button-sm" (click)="editState(s)" pTooltip="Edit State"></button>
+                <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm" (click)="confirmDeleteState(s.id)" pTooltip="Delete State"></button>
               </td>
             </tr>
           </ng-template>
         </p-table>
       </p-tabpanel>
 
+      <!-- 🧾 Record Sessions -->
       <p-tabpanel value="1">
-        <div class="flex justify-end mb-4">
+        <div class="flex justify-between items-center mb-4">
+          <span class="p-input-icon-left max-w-xs">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              placeholder="Search sessions..."
+              (input)="onSessionFilter($event)"
+              class="p-inputtext-sm w-full"
+            />
+          </span>
+
           <button
             pButton
             label="Add Session"
             icon="pi pi-plus"
-            (click)="openNewSessionDialog()"
             class="p-button-success"
+            (click)="openNewSessionDialog()"
           ></button>
         </div>
 
-        <p-table [value]="sessions" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+        <p-table
+          #sessionTable
+          [value]="sessions"
+          [paginator]="true"
+          [rows]="5"
+          [globalFilterFields]="['name', 'description', 'createdAt']"
+          responsiveLayout="scroll"
+        >
           <ng-template pTemplate="header">
             <tr>
               <th>ID</th>
@@ -96,22 +120,8 @@
               <td>{{ session.description }}</td>
               <td>{{ session.createdAt | date: 'short' }}</td>
               <td class="flex gap-2">
-                <button
-                  pButton
-                  icon="pi pi-pencil"
-                  class="p-button-rounded p-button-info p-button-sm"
-                  (click)="editSession(session)"
-                  pTooltip="Edit Session"
-                  tooltipPosition="top"
-                ></button>
-                <button
-                  pButton
-                  icon="pi pi-trash"
-                  class="p-button-rounded p-button-danger p-button-sm"
-                  (click)="confirmDeleteSession(session.id)"
-                  pTooltip="Delete Session"
-                  tooltipPosition="top"
-                ></button>
+                <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info p-button-sm" (click)="editSession(session)" pTooltip="Edit Session"></button>
+                <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm" (click)="confirmDeleteSession(session.id)" pTooltip="Delete Session"></button>
               </td>
             </tr>
           </ng-template>
@@ -119,87 +129,4 @@
       </p-tabpanel>
     </p-tabpanels>
   </p-tabs>
-
-  <p-dialog
-    header="{{ isEditState ? 'Edit Battery State' : 'Add Battery State' }}"
-    [(visible)]="displayStateDialog"
-    [modal]="true"
-    [draggable]="false"
-    [dismissableMask]="true"
-    [style]="{ width: '400px' }"
-  >
-    <div class="flex flex-col gap-3">
-      <label>Status</label>
-      <p-select
-        [options]="statusOptions"
-        optionLabel="label"
-        optionValue="value"
-        [(ngModel)]="stateForm.status"
-        placeholder="Select Status"
-        class="w-full"
-      ></p-select>
-
-      <label>Voltage (V)</label>
-      <input type="number" pInputText [(ngModel)]="stateForm.voltage" class="w-full" />
-      <label>Current (A)</label>
-      <input type="number" pInputText [(ngModel)]="stateForm.current" class="w-full" />
-      <label>Temperature (°C)</label>
-      <input type="number" pInputText [(ngModel)]="stateForm.temperature" class="w-full" />
-    </div>
-
-    <ng-template pTemplate="footer">
-      <button
-        pButton
-        label="Cancel"
-        icon="pi pi-times"
-        class="p-button-text"
-        (click)="displayStateDialog=false"
-      ></button>
-      <button
-        pButton
-        label="{{ isEditState ? 'Update' : 'Create' }}"
-        icon="pi pi-check"
-        class="p-button-primary"
-        (click)="saveState()"
-      ></button>
-    </ng-template>
-  </p-dialog>
-
-  <p-dialog
-    header="{{ isEditSession ? 'Edit Session' : 'Add Session' }}"
-    [(visible)]="displaySessionDialog"
-    [modal]="true"
-    [draggable]="false"
-    [dismissableMask]="true"
-    [style]="{ width: '400px' }"
-  >
-    <div class="flex flex-col gap-3">
-      <label>Name</label>
-      <input pInputText [(ngModel)]="sessionForm.name" class="w-full" />
-      <label>Description</label>
-      <textarea
-        pInputTextarea
-        [(ngModel)]="sessionForm.description"
-        class="w-full"
-        rows="3"
-      ></textarea>
-    </div>
-
-    <ng-template pTemplate="footer">
-      <button
-        pButton
-        label="Cancel"
-        icon="pi pi-times"
-        class="p-button-text"
-        (click)="displaySessionDialog=false"
-      ></button>
-      <button
-        pButton
-        label="{{ isEditSession ? 'Update' : 'Create' }}"
-        icon="pi pi-check"
-        class="p-button-primary"
-        (click)="saveSession()"
-      ></button>
-    </ng-template>
-  </p-dialog>
 </div>

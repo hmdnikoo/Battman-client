@@ -1,42 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Card } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { Tag } from 'primeng/tag';
-import { ProgressBar } from 'primeng/progressbar';
-import { TableModule } from 'primeng/table';
-import { Dialog } from 'primeng/dialog';
-import { InputText } from 'primeng/inputtext';
-import { InputNumber } from 'primeng/inputnumber';
-import { TabsModule, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Toast } from 'primeng/toast';
-import { Select } from 'primeng/select';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Table } from 'primeng/table';
 import { BatteryState } from '../../../../interfaces/battery-state';
 import { BatteryStateService } from '../../../../shared/services/battery-state-service';
 import { RecordSessionService } from '../../../../shared/services/record-session-service';
 import { RecordSession } from '../../../../interfaces/record-session ';
 import { BatteryStatus } from '../../../../types/battery-status';
-import { TextareaModule } from 'primeng/textarea'
 import { PrimengSharedModule } from '../../../../shared/modules/primeng-shared-module';
 
 @Component({
   selector: 'app-fleet-details',
   standalone: true,
-  imports: [
-    PrimengSharedModule
-  ],
+  imports: [PrimengSharedModule],
   providers: [ConfirmationService, MessageService],
   templateUrl: './details-component.html',
   styleUrls: ['./details-component.scss']
 })
 export class DetailsComponent implements OnInit {
+  @ViewChild('stateTable') stateTable!: Table;
+  @ViewChild('sessionTable') sessionTable!: Table;
+
   batteryId!: number;
   states: BatteryState[] = [];
   sessions: RecordSession[] = [];
+
+  stateFilter = '';
+  sessionFilter = '';
+
   displayStateDialog = false;
   displaySessionDialog = false;
   isEditState = false;
@@ -73,6 +64,16 @@ export class DetailsComponent implements OnInit {
   ngOnInit(): void {
     this.batteryId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadData();
+  }
+
+  onStateFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.stateTable.filterGlobal(value, 'contains');
+  }
+
+  onSessionFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.sessionTable.filterGlobal(value, 'contains');
   }
 
   loadData(): void {
@@ -126,47 +127,27 @@ export class DetailsComponent implements OnInit {
       status: normalizedStatus
     };
 
-    if (this.isEditState && this.selectedStateId !== undefined) {
-      this.stateService.updateState(this.selectedStateId, payload).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'State updated successfully'
-          });
-          this.displayStateDialog = false;
-          this.loadData();
-        },
-        error: (err) => {
-          console.error('Error updating state:', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to update state'
-          });
-        }
-      });
-    } else {
-      this.stateService.createState(this.batteryId, payload).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'State created successfully'
-          });
-          this.displayStateDialog = false;
-          this.loadData();
-        },
-        error: (err) => {
-          console.error('Error creating state:', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to create state'
-          });
-        }
-      });
-    }
+    const request$ = this.isEditState && this.selectedStateId
+      ? this.stateService.updateState(this.selectedStateId, payload)
+      : this.stateService.createState(this.batteryId, payload);
+
+    request$.subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: this.isEditState ? 'State updated successfully' : 'State created successfully'
+        });
+        this.displayStateDialog = false;
+        this.loadData();
+      },
+      error: () =>
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: this.isEditState ? 'Failed to update state' : 'Failed to create state'
+        })
+    });
   }
 
   confirmDeleteState(id: number): void {
@@ -184,14 +165,12 @@ export class DetailsComponent implements OnInit {
             });
             this.loadData();
           },
-          error: (err) => {
-            console.error('Error deleting state:', err);
+          error: () =>
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: 'Failed to delete state'
-            });
-          }
+            })
         });
       }
     });
@@ -211,49 +190,27 @@ export class DetailsComponent implements OnInit {
   }
 
   saveSession(): void {
-    if (this.isEditSession && this.selectedSessionId !== undefined) {
-      this.sessionService
-        .updateSession(this.selectedSessionId, this.sessionForm)
-        .subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Session updated successfully'
-            });
-            this.displaySessionDialog = false;
-            this.loadData();
-          },
-          error: (err) => {
-            console.error('Error updating session:', err);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to update session'
-            });
-          }
+    const request$ = this.isEditSession && this.selectedSessionId
+      ? this.sessionService.updateSession(this.selectedSessionId, this.sessionForm)
+      : this.sessionService.createSession(this.batteryId, this.sessionForm);
+
+    request$.subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: this.isEditSession ? 'Session updated successfully' : 'Session created successfully'
         });
-    } else {
-      this.sessionService.createSession(this.batteryId, this.sessionForm).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Session created successfully'
-          });
-          this.displaySessionDialog = false;
-          this.loadData();
-        },
-        error: (err) => {
-          console.error('Error creating session:', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to create session'
-          });
-        }
-      });
-    }
+        this.displaySessionDialog = false;
+        this.loadData();
+      },
+      error: () =>
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: this.isEditSession ? 'Failed to update session' : 'Failed to create session'
+        })
+    });
   }
 
   confirmDeleteSession(id: number): void {
@@ -271,14 +228,12 @@ export class DetailsComponent implements OnInit {
             });
             this.loadData();
           },
-          error: (err) => {
-            console.error('Error deleting session:', err);
+          error: () =>
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
               detail: 'Failed to delete session'
-            });
-          }
+            })
         });
       }
     });

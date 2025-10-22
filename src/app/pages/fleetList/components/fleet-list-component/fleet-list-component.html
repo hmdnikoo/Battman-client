@@ -16,20 +16,26 @@
       <input
         pInputText
         type="text"
-        [(ngModel)]="globalFilter"
         placeholder="Search batteries..."
         class="p-inputtext-sm w-full"
+        (input)="onGlobalFilter($event)"
       />
     </span>
   </div>
 
   <p-table
+    #batteryTable
     [value]="(batteries$ | async) ?? []"
     [paginator]="true"
     [rows]="5"
     [rowsPerPageOptions]="[5, 10, 20]"
-    [globalFilterFields]="['id', 'nominalVoltage', 'nominalCapacity', 'nominalEnergy', 'createdAt']"
-    [filters]="{ global: { value: globalFilter, matchMode: 'contains' } }"
+    [globalFilterFields]="[
+      'id',
+      'nominalVoltage',
+      'nominalCapacity',
+      'nominalEnergy',
+      'createdAt'
+    ]"
     [stripedRows]="true"
     [rowHover]="true"
     [showGridlines]="true"

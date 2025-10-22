@@ -5,7 +5,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { TabList, TabPanels, TabPanel, TabsModule } from 'primeng/tabs';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -68,7 +68,8 @@ import { PanelModule } from 'primeng/panel';
     DrawerModule,
     SplitterModule,
     UIChart,
-    PanelModule
+    PanelModule,
+    Table
   ]
 })
 export class PrimengSharedModule { }
