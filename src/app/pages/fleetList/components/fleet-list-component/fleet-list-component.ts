@@ -1,28 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
 import { Observable, map } from 'rxjs';
 
 import { BatteryService } from '../../../../shared/services/battery-service';
 import { Battery } from '../../../../interfaces/battery';
+import { PrimengSharedModule } from '../../../../shared/modules/primeng-shared-module';
 
 @Component({
   selector: 'app-fleet-list',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    TableModule,
-    TagModule,
-    InputTextModule,
-    ButtonModule,
-    DialogModule
+    PrimengSharedModule
   ],
   templateUrl: './fleet-list-component.html',
   styleUrls: ['./fleet-list-component.scss']

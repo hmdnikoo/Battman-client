@@ -1,14 +1,12 @@
 import { ChangeDetectorRef, Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { CardModule } from "primeng/card";
 import { PieChartComponent } from '../../../../shared/components/charts/pie-chart-component/pie-chart-component';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { DialogModule } from 'primeng/dialog';
-import { PanelModule } from 'primeng/panel';
+import { isPlatformBrowser } from '@angular/common';
+import { PrimengSharedModule } from '../../../../shared/modules/primeng-shared-module';
 
 
 @Component({
   selector: 'app-home-component',
-  imports: [CardModule, PieChartComponent, DialogModule,CommonModule, PanelModule],
+  imports: [PrimengSharedModule, PieChartComponent],
   templateUrl: './home-component.html',
   styleUrl: './home-component.scss'
 })

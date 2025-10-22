@@ -14,24 +14,17 @@ import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { TabsModule } from 'primeng/tabs';
+import { ToastModule } from 'primeng/toast';
+import { SelectModule } from 'primeng/select';
+import { PrimengSharedModule } from './shared/modules/primeng-shared-module';
 @Component({
   selector: 'app-root',
   imports: [
+
     CommonModule,
     RouterOutlet,
     SidebarComponent,
-    DrawerModule,
-    CardModule,
-    ButtonModule,
-    SplitterModule,
-    ChartModule,
-    PanelModule,
-    DialogModule,
-    TagModule,
-    TableModule,
-    InputTextModule,
-    FormsModule,
-    TabsModule
+    PrimengSharedModule,
 ],
   templateUrl: './app.html',
   styleUrl: './app.scss'

@@ -1,13 +1,12 @@
-import { ChangeDetectorRef, Component, effect, inject, Input, input, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
 import { AppConfigService } from '../../../services/app-config-service';
 import { DesignerService } from '../../../services/designer-service';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { UIChart } from "primeng/chart";
-import { CardModule } from 'primeng/card';
+import { isPlatformBrowser } from '@angular/common';
+import { PrimengSharedModule } from '../../../modules/primeng-shared-module';
 
 @Component({
   selector: 'pie-chart',
-  imports: [UIChart, CardModule, CommonModule],
+  imports: [PrimengSharedModule],
   templateUrl: './pie-chart-component.html',
   styleUrl: './pie-chart-component.scss'
 })
