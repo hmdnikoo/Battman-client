@@ -1,3 +1,6 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
 <div class="p-6 space-y-6 max-w-7xl mx-auto">
   <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
     <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-500">
@@ -85,7 +88,7 @@
               pButton
               icon="pi pi-trash"
               class="p-button-rounded p-button-danger p-button-sm"
-              (click)="deleteBattery(battery.id); $event.stopPropagation()"
+              (click)="confirmDeleteBattery(battery.id); $event.stopPropagation()"
             ></button>
           </td>
         </tr>

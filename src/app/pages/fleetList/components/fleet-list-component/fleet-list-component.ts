@@ -5,13 +5,15 @@ import { BatteryService } from '../../../../shared/services/battery-service';
 import { Battery } from '../../../../interfaces/battery';
 import { SharedModule } from '../../../../shared/modules/shared-module';
 import { Table } from 'primeng/table';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-fleet-list',
   standalone: true,
   imports: [SharedModule],
   templateUrl: './fleet-list-component.html',
-  styleUrls: ['./fleet-list-component.scss']
+  styleUrls: ['./fleet-list-component.scss'],
+  providers: [ConfirmationService, MessageService]
 })
 export class FleetListComponent implements OnInit {
   @ViewChild('batteryTable') batteryTable!: Table;
@@ -30,12 +32,16 @@ export class FleetListComponent implements OnInit {
     nominalEnergy: 0
   };
 
-  constructor(private router: Router, private batteryService: BatteryService) { }
+  constructor(
+    private router: Router,
+    private batteryService: BatteryService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.loadBatteries();
   }
-
 
   onRowsPerPageChange(val: number, table: any) {
     this.rows = val;
@@ -43,6 +49,7 @@ export class FleetListComponent implements OnInit {
     table.rows = val;
     table.reset();
   }
+
   loadBatteries(): void {
     this.batteries$ = this.batteryService.getAll().pipe(map((batteries) => batteries ?? []));
   }
@@ -79,27 +86,46 @@ export class FleetListComponent implements OnInit {
         next: () => {
           this.loadBatteries();
           this.closeDialog();
+          this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Battery updated successfully' });
         },
-        error: (err) => console.error('Error updating battery:', err)
+        error: (err) => {
+          console.error('Error updating battery:', err);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update battery' });
+        }
       });
     } else {
       this.batteryService.create(this.batteryForm as Battery).subscribe({
         next: () => {
           this.loadBatteries();
           this.closeDialog();
+          this.messageService.add({ severity: 'success', summary: 'Created', detail: 'Battery added successfully' });
         },
-        error: (err) => console.error('Error creating battery:', err)
+        error: (err) => {
+          console.error('Error creating battery:', err);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add battery' });
+        }
       });
     }
   }
 
-  deleteBattery(id: number): void {
-    if (confirm('Are you sure you want to delete this battery?')) {
-      this.batteryService.delete(id).subscribe({
-        next: () => this.loadBatteries(),
-        error: (err) => console.error('Error deleting battery:', err)
-      });
-    }
+  confirmDeleteBattery(id: number): void {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this battery?',
+      header: 'Confirm Deletion',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.batteryService.delete(id).subscribe({
+          next: () => {
+            this.loadBatteries();
+            this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Battery deleted successfully' });
+          },
+          error: (err) => {
+            console.error('Error deleting battery:', err);
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete battery' });
+          }
+        });
+      }
+    });
   }
 
   closeDialog(): void {
