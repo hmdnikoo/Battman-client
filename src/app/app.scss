@@ -4,3 +4,21 @@
   background: #f5f7fb;
   // min-height: 100vh;
 }
+
+.p-paginator .p-dropdown-panel,
+.p-dropdown-panel {
+  position: fixed !important;
+  z-index: 9999 !important;
+  inset: auto !important;
+}
+
+.p-dropdown-panel {
+  background: white !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+}
+
+.overflow-x-auto {
+  overflow: visible !important;
+}

@@ -1,132 +1,325 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
-<div class="mt-10">
-  <p-tabs value="0" class="bg-white dark:bg-surface-900 p-6 rounded-xl shadow-md">
+<div class="mt-10 max-w-7xl mx-auto px-4">
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-500 mb-6">Fleet Dashboard</h1>
+
+  <p-tabs value="0" class="bg-white dark:bg-surface-900 p-6 rounded-2xl shadow-lg">
     <p-tablist>
-      <p-tab value="0">Battery States</p-tab>
-      <p-tab value="1">Record Sessions</p-tab>
+      <p-tab value="0">
+        <i class="pi pi-bolt mr-2 text-primary-500"></i>Battery States
+      </p-tab>
+      <p-tab value="1">
+        <i class="pi pi-database mr-2 text-primary-500"></i>Record Sessions
+      </p-tab>
     </p-tablist>
 
     <p-tabpanels>
-      <!-- 🔋 Battery States -->
       <p-tabpanel value="0">
-        <div class="flex justify-between items-center mb-4">
-          <span class="p-input-icon-left max-w-xs">
-            <i class="pi pi-search"></i>
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
+          <div class="relative w-full sm:max-w-sm">
+            <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
             <input
               pInputText
               type="text"
               placeholder="Search states..."
               (input)="onStateFilter($event)"
-              class="p-inputtext-sm w-full"
+              class="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-400"
             />
-          </span>
-
+          </div>
           <button
             pButton
-            label="Add State"
             icon="pi pi-plus"
-            class="p-button-success"
+            label="Add State"
+            class="p-button-success flex items-center gap-2 !px-5 !py-2 rounded-lg shadow-sm hover:shadow-md transition text-sm font-medium"
             (click)="openNewStateDialog()"
           ></button>
         </div>
 
-        <p-table
-          #stateTable
-          [value]="states"
-          [paginator]="true"
-          [rows]="5"
-          [globalFilterFields]="['status', 'voltage', 'current', 'temperature']"
-          responsiveLayout="scroll"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th>ID</th>
-              <th>Status</th>
-              <th>Voltage (V)</th>
-              <th>Current (A)</th>
-              <th>Temperature (°C)</th>
-              <th>Actions</th>
-            </tr>
-          </ng-template>
+        <div class="overflow-x-auto rounded-xl border border-gray-200 relative min-h-[240px]">
+          @if (loadingStates) {
+          <div class="absolute inset-0 flex justify-center items-center bg-white/70 dark:bg-gray-900/70 z-10 rounded-xl">
+            <i class="pi pi-spin pi-spinner text-primary-500 text-4xl"></i>
+          </div>
+          }
 
-          <ng-template pTemplate="body" let-s>
-            <tr>
-              <td>{{ s.id }}</td>
-              <td>
-                <p-tag
-                  [value]="s.status"
-                  [severity]="s.status === 'CHARGING' ? 'success' : 'warn'"
-                ></p-tag>
-              </td>
-              <td>{{ s.voltage }}</td>
-              <td>{{ s.current }}</td>
-              <td>{{ s.temperature }}</td>
-              <td class="flex gap-2">
-                <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info p-button-sm" (click)="editState(s)" pTooltip="Edit State"></button>
-                <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm" (click)="confirmDeleteState(s.id)" pTooltip="Delete State"></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+          <p-table
+            #stateTable
+            [value]="states"
+            [paginator]="true"
+            [rows]="stateRows"
+            [globalFilterFields]="['status', 'voltage', 'current', 'temperature']"
+            responsiveLayout="scroll"
+          >
+            <ng-template pTemplate="header">
+              <tr class="bg-gray-100 text-gray-700 text-sm">
+                <th class="py-3 px-2 text-left">ID</th>
+                <th class="py-3 px-2 text-left">Status</th>
+                <th class="py-3 px-2 text-left">Voltage (V)</th>
+                <th class="py-3 px-2 text-left">Current (A)</th>
+                <th class="py-3 px-2 text-left">Temperature (°C)</th>
+                <th class="py-3 px-2 text-left">Actions</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-s>
+              <tr class="hover:bg-gray-50 transition text-sm sm:text-base">
+                <td class="py-2 px-2">{{ s.id }}</td>
+                <td class="py-2 px-2">
+                  <p-tag [value]="s.status" [severity]="s.status === 'CHARGING' ? 'success' : 'warn'"></p-tag>
+                </td>
+                <td class="py-2 px-2">{{ s.voltage }}</td>
+                <td class="py-2 px-2">{{ s.current }}</td>
+                <td class="py-2 px-2">{{ s.temperature }}</td>
+                <td class="py-2 px-2 flex gap-2 justify-start">
+                  <button
+                    pButton
+                    icon="pi pi-pencil"
+                    class="p-button-rounded p-button-info p-button-sm"
+                    (click)="editState(s); $event.stopPropagation()"
+                  ></button>
+                  <button
+                    pButton
+                    icon="pi pi-trash"
+                    class="p-button-rounded p-button-danger p-button-sm"
+                    (click)="confirmDeleteState(s.id); $event.stopPropagation()"
+                  ></button>
+                </td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="paginatorleft">
+              <span class="text-gray-500 text-sm ml-2">Rows per page:</span>
+            </ng-template>
+
+            <ng-template pTemplate="paginatorright">
+              <p-select
+                [options]="stateRowsOptions"
+                [(ngModel)]="stateRows"
+                (onChange)="onRowsChange($event.value, stateTable)"
+                [appendTo]="'body'"
+                class="w-28"
+                placeholder="Rows"
+              ></p-select>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="6" class="text-center text-gray-400 py-4">No states found.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
       </p-tabpanel>
 
-      <!-- 🧾 Record Sessions -->
       <p-tabpanel value="1">
-        <div class="flex justify-between items-center mb-4">
-          <span class="p-input-icon-left max-w-xs">
-            <i class="pi pi-search"></i>
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
+          <div class="relative w-full sm:max-w-sm">
+            <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
             <input
               pInputText
               type="text"
               placeholder="Search sessions..."
               (input)="onSessionFilter($event)"
-              class="p-inputtext-sm w-full"
+              class="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-400"
             />
-          </span>
-
+          </div>
           <button
             pButton
-            label="Add Session"
             icon="pi pi-plus"
-            class="p-button-success"
+            label="Add Session"
+            class="p-button-success flex items-center gap-2 !px-5 !py-2 rounded-lg shadow-sm hover:shadow-md transition text-sm font-medium"
             (click)="openNewSessionDialog()"
           ></button>
         </div>
 
-        <p-table
-          #sessionTable
-          [value]="sessions"
-          [paginator]="true"
-          [rows]="5"
-          [globalFilterFields]="['name', 'description', 'createdAt']"
-          responsiveLayout="scroll"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Created At</th>
-              <th>Actions</th>
-            </tr>
-          </ng-template>
+        <div class="overflow-x-auto rounded-xl border border-gray-200 relative min-h-[240px]">
+          @if (loadingSessions) {
+          <div class="absolute inset-0 flex justify-center items-center bg-white/70 dark:bg-gray-900/70 z-10 rounded-xl">
+            <i class="pi pi-spin pi-spinner text-primary-500 text-4xl"></i>
+          </div>
+          }
 
-          <ng-template pTemplate="body" let-session>
-            <tr>
-              <td>{{ session.id }}</td>
-              <td>{{ session.name }}</td>
-              <td>{{ session.description }}</td>
-              <td>{{ session.createdAt | date: 'short' }}</td>
-              <td class="flex gap-2">
-                <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info p-button-sm" (click)="editSession(session)" pTooltip="Edit Session"></button>
-                <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm" (click)="confirmDeleteSession(session.id)" pTooltip="Delete Session"></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+          <p-table
+            #sessionTable
+            [value]="sessions"
+            [paginator]="true"
+            [rows]="sessionRows"
+            [globalFilterFields]="['name', 'description', 'createdAt']"
+            responsiveLayout="scroll"
+          >
+            <ng-template pTemplate="header">
+              <tr class="bg-gray-100 text-gray-700 text-sm">
+                <th class="py-3 px-2 text-left">ID</th>
+                <th class="py-3 px-2 text-left">Name</th>
+                <th class="py-3 px-2 text-left">Description</th>
+                <th class="py-3 px-2 text-left">Created At</th>
+                <th class="py-3 px-2 text-left">Actions</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-session>
+              <tr class="hover:bg-gray-50 transition text-sm sm:text-base">
+                <td class="py-2 px-2">{{ session.id }}</td>
+                <td class="py-2 px-2">{{ session.name }}</td>
+                <td class="py-2 px-2">{{ session.description }}</td>
+                <td class="py-2 px-2">{{ session.createdAt | date: 'short' }}</td>
+                <td class="py-2 px-2 flex gap-2 justify-start">
+                  <button
+                    pButton
+                    icon="pi pi-pencil"
+                    class="p-button-rounded p-button-info p-button-sm"
+                    (click)="editSession(session); $event.stopPropagation()"
+                  ></button>
+                  <button
+                    pButton
+                    icon="pi pi-trash"
+                    class="p-button-rounded p-button-danger p-button-sm"
+                    (click)="confirmDeleteSession(session.id); $event.stopPropagation()"
+                  ></button>
+                </td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="paginatorleft">
+              <span class="text-gray-500 text-sm ml-2">Rows per page:</span>
+            </ng-template>
+
+            <ng-template pTemplate="paginatorright">
+              <p-select
+                [options]="sessionRowsOptions"
+                [(ngModel)]="sessionRows"
+                (onChange)="onRowsChange($event.value, sessionTable)"
+                [appendTo]="'body'"
+                class="w-28"
+                placeholder="Rows"
+              ></p-select>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="text-center text-gray-400 py-4">No sessions found.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
       </p-tabpanel>
     </p-tabpanels>
   </p-tabs>
 </div>
+
+<p-dialog
+  header="{{ isEditState ? 'Edit State' : 'Add New State' }}"
+  [(visible)]="displayStateDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '90%', maxWidth: '420px' }"
+>
+  <div class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Voltage (V)</label>
+      <input
+        pInputText
+        type="number"
+        [(ngModel)]="stateForm.voltage"
+        class="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-400 px-3 py-2"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Current (A)</label>
+      <input
+        pInputText
+        type="number"
+        [(ngModel)]="stateForm.current"
+        class="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-400 px-3 py-2"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Temperature (°C)</label>
+      <input
+        pInputText
+        type="number"
+        [(ngModel)]="stateForm.temperature"
+        class="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-400 px-3 py-2"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+      <p-select
+        [options]="statusOptions"
+        [(ngModel)]="stateForm.status"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select status"
+        class="w-full"
+      ></p-select>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-between items-center mt-2 w-full">
+      <button
+        pButton
+        label="Cancel"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="displayStateDialog = false"
+      ></button>
+      <button
+        pButton
+        label="{{ isEditState ? 'Update' : 'Create' }}"
+        icon="pi pi-check"
+        class="p-button-success"
+        (click)="saveState()"
+      ></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="{{ isEditSession ? 'Edit Session' : 'Add New Session' }}"
+  [(visible)]="displaySessionDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '90%', maxWidth: '420px' }"
+>
+  <div class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+      <input
+        pInputText
+        type="text"
+        [(ngModel)]="sessionForm.name"
+        class="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-400 px-3 py-2"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+      <textarea
+        pInputTextarea
+        [(ngModel)]="sessionForm.description"
+        rows="3"
+        class="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-400 px-3 py-2"
+      ></textarea>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-between items-center mt-2 w-full">
+      <button
+        pButton
+        label="Cancel"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="displaySessionDialog = false"
+      ></button>
+      <button
+        pButton
+        label="{{ isEditSession ? 'Update' : 'Create' }}"
+        icon="pi pi-check"
+        class="p-button-success"
+        (click)="saveSession()"
+      ></button>
+    </div>
+  </ng-template>
+</p-dialog>

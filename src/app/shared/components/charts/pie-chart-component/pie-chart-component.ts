@@ -2,11 +2,11 @@ import { ChangeDetectorRef, Component, effect, inject, Input, OnInit, PLATFORM_I
 import { AppConfigService } from '../../../services/app-config-service';
 import { DesignerService } from '../../../services/designer-service';
 import { isPlatformBrowser } from '@angular/common';
-import { PrimengSharedModule } from '../../../modules/primeng-shared-module';
+import { SharedModule } from '../../../modules/shared-module';
 
 @Component({
   selector: 'pie-chart',
-  imports: [PrimengSharedModule],
+  imports: [SharedModule],
   templateUrl: './pie-chart-component.html',
   styleUrl: './pie-chart-component.scss'
 })

@@ -1,53 +1,63 @@
-<!-- 🌟 Page Title -->
 <div class="px-6 pt-6 pb-2">
-  <h1 class="text-3xl font-bold text-gray-800 tracking-tight flex items-center gap-3">
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-500 tracking-tight flex items-center gap-3">
     <i class="pi pi-chart-pie text-blue-500 text-4xl"></i>
     Fleet Status
   </h1>
-  <p class="text-gray-500 text-sm mt-1">
+  <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">
     Overview of fleet performance and status distribution
   </p>
-  <hr class="border-t-2 border-blue-400 w-32 mt-2" />
+  <hr class="border-t-2 border-blue-500 w-32 mt-2 rounded-full" />
 </div>
 
-<!-- ✅ Grid layout: 1 column on mobile, 2 columns on medium and larger screens -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-
-  <!-- ✅ Each chart panel (clickable) (click)="openDialog(chart)" -->
-  <p-panel
+  <div
     *ngFor="let chart of charts"
-    [header]="chart.title"
-    [toggleable]="false"
-    class="cursor-pointer hover:shadow-lg transition-shadow"
+    class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition cursor-pointer"
+    (click)="openDialog(chart)"
   >
-    <div class="m-4">
-      <!-- 📊 Small chart shown inside the card -->
+    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-800">
+        {{ chart.title }}
+      </h3>
+      <i class="pi pi-chart-line text-blue-400 text-xl"></i>
+    </div>
+    <div class="p-5 bg-white rounded-b-2xl">
       <pie-chart
         [data]="chart.data"
         [title]="chart.title"
-        [style]="{ width: '100%', height: '250px' }"
+        [style]="{ width: '100%', height: '260px', backgroundColor: '#ffffff' }"
       ></pie-chart>
     </div>
-  </p-panel>
+  </div>
 </div>
 
-<!-- ✅ Popup dialog for enlarged chart -->
 <p-dialog
   header="{{ selectedChart?.title }}"
   [(visible)]="displayDialog"
   [modal]="true"
-  [style]="{ width: '80vw', maxWidth: '900px' }"
+  [style]="{ width: '90%', maxWidth: '900px' }"
   [baseZIndex]="10000"
   [draggable]="false"
   [resizable]="false"
 >
-  <div class="flex justify-center items-center p-4">
-    <!-- 📈 Larger chart displayed inside the dialog -->
+  <div class="flex justify-center items-center p-4 bg-white rounded-lg">
     <pie-chart
       *ngIf="selectedChart"
       [data]="selectedChart.data"
       [title]="selectedChart.title"
-      [style]="{ width: '100%', height: '500px' }"
+      [style]="{ width: '100%', height: '500px', backgroundColor: '#ffffff' }"
     ></pie-chart>
   </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end">
+      <button
+        pButton
+        label="Close"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="displayDialog = false"
+      ></button>
+    </div>
+  </ng-template>
 </p-dialog>

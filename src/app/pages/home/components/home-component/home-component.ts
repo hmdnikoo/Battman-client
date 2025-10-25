@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { PieChartComponent } from '../../../../shared/components/charts/pie-chart-component/pie-chart-component';
 import { isPlatformBrowser } from '@angular/common';
-import { PrimengSharedModule } from '../../../../shared/modules/primeng-shared-module';
+import { SharedModule } from '../../../../shared/modules/shared-module';
 
 
 @Component({
   selector: 'app-home-component',
-  imports: [PrimengSharedModule, PieChartComponent],
+  imports: [SharedModule, PieChartComponent],
   templateUrl: './home-component.html',
   styleUrl: './home-component.scss'
 })

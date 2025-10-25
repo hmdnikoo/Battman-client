@@ -1,56 +1,71 @@
-<!-- 🔹 Toggle Button (only visible on small screens) -->
 <button
-  class="lg:hidden fixed top-4 left-4 z-50 bg-gray-800 text-white p-2 rounded-md hover:bg-gray-700"
+  class="lg:hidden fixed top-4 left-4 z-50 bg-primary-600 text-white p-2 rounded-md shadow-md hover:bg-primary-700 focus:outline-none transition"
   (click)="toggleSidebar()"
 >
   <i class="pi pi-bars text-xl"></i>
 </button>
 
-<!-- 🔹 Sidebar -->
 <aside
-  class="fixed top-0 left-0 h-screen bg-gray-800 text-white flex flex-col transition-all duration-300 z-40"
+  class="fixed top-0 left-0 h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 flex flex-col shadow-xl border-r border-gray-200 dark:border-gray-800 transition-all duration-300 z-40"
   [class.w-64]="!isCollapsed"
   [class.w-20]="isCollapsed"
   [class.-translate-x-full]="isMobileHidden"
   [class.translate-x-0]="!isMobileHidden"
 >
-  <!-- Logo Section -->
-  <div class="flex items-center justify-between p-4 border-b border-gray-700">
+  <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
     <div class="flex items-center gap-2">
-      <i class="pi pi-wave text-blue-400 text-2xl"></i>
-      <span *ngIf="!isCollapsed" class="text-xl font-semibold">Battman</span>
+      <div
+        class="flex items-center justify-center w-10 h-10 bg-primary-100 dark:bg-primary-800 rounded-lg text-primary-600 dark:text-primary-300"
+      >
+        <i class="pi pi-bolt text-xl"></i>
+      </div>
+      <span *ngIf="!isCollapsed" class="text-xl font-semibold tracking-wide">Battman</span>
     </div>
-    <!-- Collapse/Expand Button (hidden on mobile) -->
+
     <button
-      class="hidden lg:block text-gray-400 hover:text-white focus:outline-none"
+      class="hidden lg:block text-gray-400 hover:text-primary-500 focus:outline-none transition"
       (click)="toggleCollapse()"
     >
       <i class="pi" [ngClass]="isCollapsed ? 'pi-angle-double-right' : 'pi-angle-double-left'"></i>
     </button>
   </div>
 
-  <!-- Menu -->
-  <nav class="flex-1 p-4">
-    <h4 *ngIf="!isCollapsed" class="text-gray-400 text-xs mb-2">DASHBOARD</h4>
+  <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+    <h4
+      *ngIf="!isCollapsed"
+      class="text-gray-400 dark:text-gray-500 text-xs uppercase tracking-wider mb-2 pl-2"
+    >
+      Dashboard
+    </h4>
 
     <a
       routerLink="/"
-      routerLinkActive="bg-gray-700"
-      class="menu-item flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-700 transition-colors"
+      routerLinkActive="bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
       (click)="closeOnMobile()"
     >
-      <i class="pi pi-home text-blue-300"></i>
-      <span *ngIf="!isCollapsed">Home</span>
+      <i class="pi pi-home text-primary-400 text-lg"></i>
+      <span *ngIf="!isCollapsed" class="font-medium">Home</span>
     </a>
 
     <a
       routerLink="/fleet-list"
-      routerLinkActive="bg-gray-700"
-      class="menu-item flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-700 transition-colors mt-2"
+      routerLinkActive="bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
       (click)="closeOnMobile()"
     >
-      <i class="pi pi-android text-green-300"></i>
-      <span *ngIf="!isCollapsed">Fleet List</span>
+      <i class="pi pi-android text-green-400 text-lg"></i>
+      <span *ngIf="!isCollapsed" class="font-medium">Fleet List</span>
     </a>
   </nav>
+
+  <div class="p-4 mt-auto border-t border-gray-200 dark:border-gray-800 text-xs text-gray-400 dark:text-gray-600">
+    <div *ngIf="!isCollapsed" class="flex items-center justify-between">
+      <span>© Battman 2025</span>
+      <i class="pi pi-cog text-gray-500 hover:text-primary-500 cursor-pointer transition"></i>
+    </div>
+    <div *ngIf="isCollapsed" class="text-center">
+      <i class="pi pi-cog text-gray-500 hover:text-primary-500 cursor-pointer transition"></i>
+    </div>
+  </div>
 </aside>

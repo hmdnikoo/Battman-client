@@ -18,6 +18,10 @@ import { DrawerModule } from 'primeng/drawer';
 import { SplitterModule } from 'primeng/splitter';
 import { UIChart } from 'primeng/chart';
 import { PanelModule } from 'primeng/panel';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 @NgModule({
   imports: [
@@ -43,7 +47,11 @@ import { PanelModule } from 'primeng/panel';
     DrawerModule,
     SplitterModule,
     UIChart,
-    PanelModule
+    PanelModule,
+    RouterLink,
+    RouterLinkActive,
+    ToggleButtonModule,
+    SelectButtonModule
   ],
   exports: [
     CommonModule,
@@ -69,7 +77,11 @@ import { PanelModule } from 'primeng/panel';
     SplitterModule,
     UIChart,
     PanelModule,
-    Table
+    Table,
+    RouterLink,
+    RouterLinkActive,
+    ToggleButtonModule,
+    SelectButtonModule
   ]
 })
-export class PrimengSharedModule { }
+export class SharedModule { }

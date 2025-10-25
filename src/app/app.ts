@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { TabsModule } from 'primeng/tabs';
 import { ToastModule } from 'primeng/toast';
 import { SelectModule } from 'primeng/select';
-import { PrimengSharedModule } from './shared/modules/primeng-shared-module';
+import { SharedModule } from './shared/modules/shared-module';
 @Component({
   selector: 'app-root',
   imports: [
@@ -24,7 +24,7 @@ import { PrimengSharedModule } from './shared/modules/primeng-shared-module';
     CommonModule,
     RouterOutlet,
     SidebarComponent,
-    PrimengSharedModule,
+    SharedModule,
 ],
   templateUrl: './app.html',
   styleUrl: './app.scss'

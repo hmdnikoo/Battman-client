@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { BatteryService } from '../../../../shared/services/battery-service';
 import { Battery } from '../../../../interfaces/battery';
-import { PrimengSharedModule } from '../../../../shared/modules/primeng-shared-module';
+import { SharedModule } from '../../../../shared/modules/shared-module';
 import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-fleet-list',
   standalone: true,
-  imports: [PrimengSharedModule],
+  imports: [SharedModule],
   templateUrl: './fleet-list-component.html',
   styleUrls: ['./fleet-list-component.scss']
 })
@@ -21,6 +21,8 @@ export class FleetListComponent implements OnInit {
   displayDialog = false;
   isEditMode = false;
   selectedBatteryId?: number;
+  rows = 5;
+  rowsOptions = [5, 10, 20].map(v => ({ label: String(v), value: v }));
 
   batteryForm: Partial<Battery> = {
     nominalVoltage: 0,
@@ -28,12 +30,19 @@ export class FleetListComponent implements OnInit {
     nominalEnergy: 0
   };
 
-  constructor(private router: Router, private batteryService: BatteryService) {}
+  constructor(private router: Router, private batteryService: BatteryService) { }
 
   ngOnInit(): void {
     this.loadBatteries();
   }
 
+
+  onRowsPerPageChange(val: number, table: any) {
+    this.rows = val;
+    table.first = 0;
+    table.rows = val;
+    table.reset();
+  }
   loadBatteries(): void {
     this.batteries$ = this.batteryService.getAll().pipe(map((batteries) => batteries ?? []));
   }

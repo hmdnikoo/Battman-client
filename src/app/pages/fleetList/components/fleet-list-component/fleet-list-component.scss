@@ -1,15 +1,19 @@
-/* 🔹 Make paginator dropdown and overlays always visible */
+
 .p-dropdown-panel {
-  z-index: 1050 !important;
+  position: fixed !important;
+  z-index: 2000 !important;
 }
 
-/* 🔹 Ensure paginator is above nearby elements */
+.p-paginator .p-dropdown-panel {
+  z-index: 1200 !important;
+}
+
 .p-paginator {
   position: relative;
   z-index: 1000;
 }
 
-/* 🔹 Prevent container from clipping dropdowns */
 .shadow-md.rounded-lg {
   overflow: visible !important;
 }
+

@@ -1,18 +1,9 @@
 import { Component, HostListener } from '@angular/core';
-import { CardModule } from 'primeng/card';
-import { Drawer } from "primeng/drawer";
-import { Button } from "primeng/button";
-import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { SharedModule } from '../../modules/shared-module';
 @Component({
   selector: 'sidebar-component',
   imports: [
-    CardModule,
-    Drawer,
-    Button,
-    CommonModule,
-    RouterLink,
-    RouterLinkActive],
+    SharedModule],
   templateUrl: './sidebar-component.html',
   styleUrl: './sidebar-component.scss'
 })
