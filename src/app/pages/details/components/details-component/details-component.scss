@@ -23,3 +23,13 @@ h2 {
   color: #111827;
   font-weight: 800;
 }
+
+
+.p-dropdown-panel,
+.p-select-panel {
+  z-index: 3000 !important;
+}
+
+.p-dialog .p-dialog-content {
+  overflow: visible !important;
+}

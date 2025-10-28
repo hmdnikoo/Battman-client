@@ -30,6 +30,8 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/battman-dashboard/",
+              "outputPath": "dist/browser",
               "budgets": [
                 {
                   "type": "initial",
@@ -45,6 +47,8 @@
               "outputHashing": "all"
             },
             "development": {
+              "baseHref": "/",
+              "outputPath": "dist",
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
