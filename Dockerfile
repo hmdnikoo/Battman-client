@@ -11,7 +11,9 @@ FROM nginx:1.27.2-alpine
 
 RUN apk update && apk upgrade && rm -rf /var/cache/apk/* && rm -rf /usr/share/nginx/html/*
 
-COPY --from=build /app/dist/browser/. /usr/share/nginx/html/
+COPY --from=build /app/dist /usr/share/nginx/html
+
+RUN mv /usr/share/nginx/html/browser/* /usr/share/nginx/html/ && rm -rf /usr/share/nginx/html/browser
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 RUN chmod -R 755 /usr/share/nginx/html
