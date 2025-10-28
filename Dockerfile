@@ -13,7 +13,8 @@ RUN apk update && apk upgrade && rm -rf /var/cache/apk/* && rm -rf /usr/share/ng
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
-RUN mv /usr/share/nginx/html/browser/* /usr/share/nginx/html/ && rm -rf /usr/share/nginx/html/browser
+RUN find /usr/share/nginx/html -type f -name "index.html" -exec dirname {} \; | head -n 1 | \
+    xargs -I {} sh -c 'cp -r {}/* /usr/share/nginx/html/ && rm -rf /usr/share/nginx/html/browser'
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 RUN chmod -R 755 /usr/share/nginx/html
