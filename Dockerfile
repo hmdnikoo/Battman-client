@@ -8,8 +8,8 @@ RUN npm ci
 
 COPY . .
 
-# Build Angular app for production (output goes to dist/browser)
-RUN npm run build -- --configuration production --base-href=/ --output-path=dist
+# Build Angular app for production with base-href matching Traefik route
+RUN npm run build -- --configuration production --base-href=/battman-dashboard/ --output-path=dist/browser
 
 # ===== Step 2: Serve via Nginx =====
 FROM nginx:1.27.2-alpine
@@ -17,7 +17,7 @@ FROM nginx:1.27.2-alpine
 RUN apk update && apk upgrade
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy built Angular files (browser folder)
+# Copy built Angular files
 COPY --from=build /app/dist/browser /usr/share/nginx/html
 
 # Copy custom Nginx config for Angular SPA routing
