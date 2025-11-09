@@ -51,8 +51,15 @@ export class HomeComponent implements OnInit {
   async loadSchedule() {
     const d: any = await this.fleetService.get('/api/schedule/next?hours=8');
     this.zone.run(() => {
-      this.schedule = d?.items?.sort((a: any, b: any) => a.start.localeCompare(b.start)) ?? [];
-      this.cdr.markForCheck();
+      const items = Array.isArray(d) ? d : d?.items ?? [];
+      this.schedule = items
+        .map((x: any) => ({
+          ...x,
+          start: new Date(x.start),
+          end: new Date(x.end)
+        }))
+        .sort((a: any, b: any) => a.start.getTime() - b.start.getTime());
+      this.cdr.detectChanges();
     });
   }
 
@@ -166,9 +173,9 @@ export class HomeComponent implements OnInit {
     const d: any = await this.fleetService.get('/api/chargers');
     const q: any = await this.fleetService.get('/api/queue');
     this.zone.run(() => {
-      this.chargers = d?.stations ?? [];
-      this.queue = q?.waiting ?? [];
-      this.cdr.markForCheck();
+      this.chargers = Array.isArray(d) ? d : d?.stations ?? [];
+      this.queue = Array.isArray(q) ? q : q?.waiting ?? [];
+      this.cdr.detectChanges();
     });
   }
 
@@ -194,7 +201,7 @@ export class HomeComponent implements OnInit {
         { label: 'Charging', value: d.charging ?? '–' },
         { label: 'Fleet Uptime', value: d.uptimePct ? d.uptimePct.toFixed(1) + '%' : '–' }
       ];
-      this.cdr.markForCheck();
+      this.cdr.detectChanges();
     });
   }
 
