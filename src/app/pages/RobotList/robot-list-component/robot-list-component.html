@@ -96,36 +96,6 @@
 
   <!-- Optional telemetry and alerts section -->
   <!--
-  <div class="grid grid-cols-12 gap-4">
-    <p-card class="col-span-12">
-      <h3 class="font-semibold mb-2">Robots</h3>
-      <p-table [value]="robots" class="text-sm" selectionMode="single" [(selection)]="selectedRobot">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Robot</th><th>State</th><th>SoC %</th><th>SoH %</th><th>Cycles</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-r>
-          <tr [pSelectableRow]="r">
-            <td>{{ r.id }}</td><td>{{ r.state }}</td><td>{{ r.soc }}</td><td>{{ r.soh }}</td><td>{{ r.cycles }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card>
 
-    <p-card class="col-span-8">
-      <h3 class="font-semibold mb-2">Robot Telemetry</h3>
-      <p class="text-gray-500 text-sm mb-2">Select a robot to load its telemetry data</p>
-      <canvas id="robotTelemetryChart" height="200"></canvas>
-    </p-card>
-
-    <p-card class="col-span-4">
-      <h3 class="font-semibold mb-2">Alerts</h3>
-      <div *ngFor="let alert of alerts" class="mb-2 text-sm p-2 rounded bg-red-50 text-red-700">
-        {{ alert }}
-      </div>
-      <div class="text-gray-500 text-xs">{{ powerNow }}</div>
-    </p-card>
-  </div>
   -->
 </div>

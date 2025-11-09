@@ -20,6 +20,8 @@ export class HomeComponent implements OnInit {
   chargers: any[] = [];
   queue: any[] = [];
   schedule: any[] = [];
+  alerts: any[] = [];
+  powerNow = '';
 
   kpis = [
     { label: 'Total Robots', value: '–' },
@@ -32,7 +34,11 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.init();
-    setInterval(() => this.loadKPIs(), 15000);
+    setInterval(() => {
+      this.loadKPIs();
+      this.loadAlertsAndPower();
+    }
+    , 15000);
   }
 
   async init() {
@@ -42,8 +48,22 @@ export class HomeComponent implements OnInit {
       this.loadSoc(),
       this.loadTrends(),
       this.loadChargers(),
-      this.loadSchedule()
+      this.loadSchedule(),
+      this.loadAlertsAndPower()
     ]);
+  }
+
+    async loadAlertsAndPower() {
+    const a: any = await this.fleetService.get('/api/alerts');
+    const p: any = await this.fleetService.get('/api/power/now');
+    this.zone.run(() => {
+      this.alerts = Array.isArray(a) ? a : a?.alerts ?? [];
+      console.table(this.alerts)
+      if (p) {
+        this.powerNow = `Total charging power: ${p.nowkW ?? '–'} kW (today peak ${p.todaysPeakkW ?? '–'} kW)`;
+      }
+      this.cdr.markForCheck();
+    });
   }
 
   async loadSchedule() {

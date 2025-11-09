@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { FleetService } from '../../../shared/services/fleet-service';
 import { SharedModule } from '../../../shared/modules/shared-module';
 import { Table } from 'primeng/table';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-robot-list-component',
@@ -34,6 +35,7 @@ export class RobotListComponent implements OnInit {
   rowsOptions = [20, 50, 100].map(v => ({ label: String(v), value: v }));
 
   constructor(
+    private router: Router,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
     private zone: NgZone,
@@ -42,15 +44,11 @@ export class RobotListComponent implements OnInit {
 
   ngOnInit() {
     this.init();
-    setInterval(() => {
-      this.loadAlertsAndPower();
-    }, 15000);
   }
 
   async init() {
     await Promise.all([
-      this.loadRobots(),
-      this.loadAlertsAndPower()
+      this.loadRobots()
     ]);
   }
 
@@ -63,6 +61,7 @@ export class RobotListComponent implements OnInit {
 
   goToDetails(id: string) {
     // Navigation to detail page can be implemented later
+    this.router.navigate(['/robot/details', id]);
   }
 
   async loadRobots() {
@@ -96,17 +95,6 @@ export class RobotListComponent implements OnInit {
     });
   }
 
-  async loadAlertsAndPower() {
-    const a: any = await this.fleetService.get('/api/alerts');
-    const p: any = await this.fleetService.get('/api/power/now');
-    this.zone.run(() => {
-      this.alerts = a?.alerts ?? [];
-      if (p) {
-        this.powerNow = `Total charging power: ${p.nowkW ?? '–'} kW (today peak ${p.todaysPeakkW ?? '–'} kW)`;
-      }
-      this.cdr.markForCheck();
-    });
-  }
 
   fmtDate(s: string) {
     return new Date(s).toLocaleString();

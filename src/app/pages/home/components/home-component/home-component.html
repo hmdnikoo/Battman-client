@@ -23,6 +23,33 @@
       <div class="text-2xl font-semibold">{{ kpi.value || '–' }}</div>
     </p-card>
   </div>
+<p-card class="col-span-12">
+  <h3 class="font-semibold mb-2">Alerts</h3>
+
+  <div *ngIf="alerts.length > 0; else noAlerts">
+    <div
+      *ngFor="let alert of alerts"
+      class="mb-2 p-3 rounded text-sm border-l-4"
+      [ngClass]="{
+        'bg-red-50 border-red-500 text-red-700': alert.severity === 'critical',
+        'bg-yellow-50 border-yellow-500 text-yellow-700': alert.severity === 'warning',
+        'bg-blue-50 border-blue-500 text-blue-700': alert.severity === 'info'
+      }"
+    >
+      <div class="flex justify-between">
+        <span class="font-semibold">{{ alert.id }}</span>
+        <span class="text-xs text-gray-500">{{ alert.ts | date:'short' }}</span>
+      </div>
+      <div class="mt-1">{{ alert.message }}</div>
+    </div>
+  </div>
+
+  <ng-template #noAlerts>
+    <div class="text-gray-400 text-sm italic">No alerts at the moment.</div>
+  </ng-template>
+
+  <div class="text-gray-500 text-xs mt-3">{{ powerNow }}</div>
+</p-card>
 
   <div class="grid grid-cols-12 gap-4">
     <p-card class="col-span-6"><canvas id="statusChart" height="600"></canvas></p-card>
@@ -31,7 +58,6 @@
     <p-card class="col-span-12"><canvas id="avgSocChart" height="600"></canvas></p-card>
     <p-card class="col-span-12"><canvas id="energyChart" height="600"></canvas></p-card>
   </div>
-
   <div class="grid grid-cols-12 gap-4">
     <p-card class="col-span-12">
       <h3 class="font-semibold mb-2">Charging Stations</h3>
@@ -47,16 +73,13 @@
           <tr>
             <td>{{ item.id }}</td>
             <td>
-              <span
-                class="px-2 py-1 rounded-full text-xs capitalize"
-                [ngClass]="{
+              <span class="px-2 py-1 rounded-full text-xs capitalize" [ngClass]="{
                   'bg-green-100 text-green-800': item.status === 'free',
                   'bg-gray-200 text-gray-800': item.status === 'occupied',
                   'bg-blue-100 text-blue-800': item.status === 'info',
                   'bg-yellow-100 text-yellow-800': item.status === 'warning',
                   'bg-red-100 text-red-800': item.status === 'critical'
-                }"
-              >
+                }">
                 {{ item.status }}
               </span>
             </td>
