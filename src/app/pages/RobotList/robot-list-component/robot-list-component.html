@@ -1,54 +1,52 @@
 <div class="p-6 space-y-6">
- <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-md">
+  <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-md">
     <p-table
       #robotTable
-      [value]="(robots$ | async) ?? []"
+      [value]="robots ?? []"
       [paginator]="true"
       [rows]="rows"
-      [globalFilterFields]="[
-        'id',
-        'state',
-        'soc',
-        'soh',
-        'cycles'
-      ]"
+      [globalFilterFields]="['id', 'state', 'soc', 'soh', 'cycles']"
       [stripedRows]="true"
       [rowHover]="true"
       [showGridlines]="false"
       responsiveLayout="scroll"
     >
-      <!-- <tr><th>Robot</th><th>State</th><th>SoC %</th><th>SoH %</th><th>Cycles</th></tr>
-  <td>{{ r.id }}</td><td>{{ r.state }}</td><td>{{ r.soc }}</td><td>{{ r.soh }}</td><td>{{ r.cycles }}</td> -->
+      <!-- Header -->
       <ng-template pTemplate="header">
         <tr class="bg-gray-100 text-gray-700">
           <th class="py-3 px-3 text-left" pSortableColumn="id">
             Robot <p-sortIcon field="id"></p-sortIcon>
           </th>
-          <th class="py-3 px-3 text-left" pSortableColumn="createdAt">
-            State <p-sortIcon field="createdAt"></p-sortIcon>
+          <th class="py-3 px-3 text-left" pSortableColumn="state">
+            State <p-sortIcon field="state"></p-sortIcon>
           </th>
-          <th class="py-3 px-3 text-left" pSortableColumn="nominalVoltage">
-           SoC % <p-sortIcon field="nominalVoltage"></p-sortIcon>
+          <th class="py-3 px-3 text-left" pSortableColumn="soc">
+            SoC % <p-sortIcon field="soc"></p-sortIcon>
           </th>
-          <th class="py-3 px-3 text-left" pSortableColumn="nominalCapacity">
-            Cycles <p-sortIcon field="nominalCapacity"></p-sortIcon>
+          <th class="py-3 px-3 text-left" pSortableColumn="soh">
+            SoH % <p-sortIcon field="soh"></p-sortIcon>
+          </th>
+          <th class="py-3 px-3 text-left" pSortableColumn="cycles">
+            Cycles <p-sortIcon field="cycles"></p-sortIcon>
           </th>
         </tr>
       </ng-template>
 
+      <!-- Body -->
       <ng-template pTemplate="body" let-robot>
         <tr
           class="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/30 transition text-sm sm:text-base"
           (click)="goToDetails(robot.id)"
         >
           <td class="py-2 px-3">{{ robot.id }}</td>
-          <td class="py-2 px-3">{{ robot.state}}</td>
+          <td class="py-2 px-3">{{ robot.state }}</td>
           <td class="py-2 px-3">{{ robot.soc }}</td>
           <td class="py-2 px-3">{{ robot.soh }}</td>
           <td class="py-2 px-3">{{ robot.cycles }}</td>
         </tr>
       </ng-template>
 
+      <!-- Custom paginator -->
       <ng-template pTemplate="paginatorleft">
         <span class="text-gray-500 text-sm">Rows per page:</span>
       </ng-template>
@@ -64,23 +62,27 @@
         ></p-select>
       </ng-template>
 
+      <!-- Empty message -->
       <ng-template pTemplate="emptymessage">
         <tr>
           <td colspan="6" class="text-center text-gray-400 py-4">
-            No batteries found.
+            No robots found.
           </td>
         </tr>
       </ng-template>
     </p-table>
   </div>
 
-  <!-- Tables -->
-  <!-- <div class="grid grid-cols-12 gap-4">
+  <!-- Optional telemetry and alerts section -->
+  <!--
+  <div class="grid grid-cols-12 gap-4">
     <p-card class="col-span-12">
       <h3 class="font-semibold mb-2">Robots</h3>
-      <p-table [value]="robots$" class="text-sm" selectionMode="single" [(selection)]="selectedRobot">
+      <p-table [value]="robots" class="text-sm" selectionMode="single" [(selection)]="selectedRobot">
         <ng-template pTemplate="header">
-          <tr><th>Robot</th><th>State</th><th>SoC %</th><th>SoH %</th><th>Cycles</th></tr>
+          <tr>
+            <th>Robot</th><th>State</th><th>SoC %</th><th>SoH %</th><th>Cycles</th>
+          </tr>
         </ng-template>
         <ng-template pTemplate="body" let-r>
           <tr [pSelectableRow]="r">
@@ -98,8 +100,11 @@
 
     <p-card class="col-span-4">
       <h3 class="font-semibold mb-2">Alerts</h3>
-      <div *ngFor="let alert of alerts" class="mb-2 text-sm p-2 rounded bg-red-50 text-red-700">{{ alert }}</div>
+      <div *ngFor="let alert of alerts" class="mb-2 text-sm p-2 rounded bg-red-50 text-red-700">
+        {{ alert }}
+      </div>
       <div class="text-gray-500 text-xs">{{ powerNow }}</div>
     </p-card>
-  </div> -->
+  </div>
+  -->
 </div>
