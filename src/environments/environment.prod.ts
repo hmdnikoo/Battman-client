@@ -1,5 +1,6 @@
 // src/environments/environment.prod.ts
 export const environment = {
   production: true,
-  apiUrl: '/battery-store'
+  apiUrl: '/battery-store',
+  battmanApiUrl:'/battman-api'
 };

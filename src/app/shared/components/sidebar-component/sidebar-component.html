@@ -47,7 +47,15 @@
       <i class="pi pi-home text-primary-400 text-lg"></i>
       <span *ngIf="!isCollapsed" class="font-medium">Home</span>
     </a>
-
+    <a
+      routerLink="/robot-list"
+      routerLinkActive="bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+      (click)="closeOnMobile()"
+    >
+      <i class="pi pi-home text-primary-400 text-lg"></i>
+      <span *ngIf="!isCollapsed" class="font-medium">Robot List</span>
+    </a>
     <a
       routerLink="/fleet-list"
       routerLinkActive="bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300"

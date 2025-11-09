@@ -1,3 +1,122 @@
 .cursor-pointer {
   cursor: pointer;
 }
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--surface-ground, #f9fafb);
+  transition: background-color 0.3s ease;
+}
+
+p-card {
+  width: 100%;
+  background: transparent;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.chart-container {
+  width: 100%;
+  height: 320px;
+  position: relative;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* KPI cards hover effect */
+.kpi-card {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.kpi-card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 0.6rem 0.5rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+thead {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Dark mode styles */
+:host-context(.dark) {
+  background-color: #111827;
+
+  .chart-card {
+    background-color: #1f2937;
+    border-color: #374151;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .chart-card:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .kpi-card {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #e5e7eb;
+  }
+
+  table {
+    color: #d1d5db;
+  }
+
+  thead {
+    background-color: #1f2937;
+    color: #9ca3af;
+  }
+
+  tbody tr:hover {
+    background-color: #374151;
+  }
+}

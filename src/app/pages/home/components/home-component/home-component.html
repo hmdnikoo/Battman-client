@@ -9,7 +9,73 @@
   <hr class="border-t-2 border-blue-500 w-32 mt-2 rounded-full" />
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+<div class="p-6 space-y-12">
+  <div class="text-sm text-gray-500 mb-2">
+    Quick exports:
+    <div class="flex flex-wrap gap-2 mt-1">
+      <a *ngFor="let link of exportLinks" [href]="link.url" class="text-blue-600 hover:underline">{{ link.label }}</a>
+    </div>
+  </div>
+  <!-- KPIs -->
+  <div class="grid grid-cols-12 gap-4">
+    <p-card *ngFor="let kpi of kpis" class="col-span-3 text-center">
+      <div class="text-gray-500">{{ kpi.label }}</div>
+      <div class="text-2xl font-semibold">{{ kpi.value || '–' }}</div>
+    </p-card>
+  </div>
+
+  <div class="grid grid-cols-12 gap-4">
+    <p-card class="col-span-12"><canvas id="socBucketsChart" height="600"></canvas></p-card>
+    <p-card class="col-span-6"><canvas id="statusChart" height="600"></canvas></p-card>
+    <p-card class="col-span-6"><canvas id="socPieChart" height="600"></canvas></p-card>
+    <p-card class="col-span-12"><canvas id="avgSocChart" height="600"></canvas></p-card>
+    <p-card class="col-span-12"><canvas id="energyChart" height="600"></canvas></p-card>
+  </div>
+
+    <div class="grid grid-cols-12 gap-4">
+    <p-card class="col-span-12">
+      <h3 class="font-semibold mb-2">Charging Stations</h3>
+      <p-table [value]="chargers" class="text-sm">
+        <ng-template pTemplate="header">
+          <tr><th>Station</th><th>Status</th><th>Robot</th></tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td>{{ item.station }}</td>
+            <td><span class="px-2 py-1 rounded-full text-xs"
+                [ngClass]="{
+                  'bg-blue-100 text-blue-800': item.status === 'info',
+                  'bg-yellow-100 text-yellow-800': item.status === 'warning',
+                  'bg-red-100 text-red-800': item.status === 'critical'
+                }">{{ item.status }}</span></td>
+            <td>{{ item.robot }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <h4 class="mt-4 font-semibold mb-2">Queue</h4>
+      <p-table [value]="queue" class="text-sm">
+        <ng-template pTemplate="header">
+          <tr><th>Robot</th><th>SoC %</th><th>ETA (min)</th></tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-q>
+          <tr><td>{{ q.robot }}</td><td>{{ q.soc }}</td><td>{{ q.eta }}</td></tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+
+    <p-card class="col-span-12">
+      <h3 class="font-semibold mb-2">Upcoming Charge Schedule (next 8h)</h3>
+      <p-table [value]="schedule" class="text-sm">
+        <ng-template pTemplate="header">
+          <tr><th>Robot</th><th>Station</th><th>Start</th><th>End</th></tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-s>
+          <tr><td>{{ s.robot }}</td><td>{{ s.station }}</td><td>{{ s.start }}</td><td>{{ s.end }}</td></tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+<!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
   <div
     *ngFor="let chart of charts"
     class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition cursor-pointer"
@@ -60,4 +126,4 @@
       ></button>
     </div>
   </ng-template>
-</p-dialog>
+</p-dialog> -->
