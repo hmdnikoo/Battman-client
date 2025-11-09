@@ -1,6 +1,4 @@
 import { ChangeDetectorRef, Component, inject, NgZone, OnInit, PLATFORM_ID } from '@angular/core';
-import { PieChartComponent } from '../../../../shared/components/charts/pie-chart-component/pie-chart-component';
-import { isPlatformBrowser } from '@angular/common';
 import { SharedModule } from '../../../../shared/modules/shared-module';
 import { FleetService } from '../../../../shared/services/fleet-service';
 import Chart from 'chart.js/auto';
@@ -8,7 +6,7 @@ import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-home-component',
-  imports: [SharedModule, PieChartComponent],
+  imports: [SharedModule],
   templateUrl: './home-component.html',
   styleUrl: './home-component.scss'
 })

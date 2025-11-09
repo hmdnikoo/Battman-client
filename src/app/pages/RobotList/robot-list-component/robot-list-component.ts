@@ -2,16 +2,15 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import Chart from 'chart.js/auto';
-import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
 import { environment } from '../../../../environments/environment';
 import { FleetService } from '../../../shared/services/fleet-service';
-import { SharedModule } from 'primeng/api';
+import { SharedModule } from '../../../shared/modules/shared-module';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-robot-list-component',
   standalone: true,
-  imports: [SharedModule, CommonModule, CardModule, TableModule],
+  imports: [SharedModule, CommonModule],
   templateUrl: './robot-list-component.html',
   styleUrls: ['./robot-list-component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -33,10 +32,12 @@ export class RobotListComponent implements OnInit {
   // chargers: any[] = [];
   // queue: any[] = [];
   // schedule: any[] = [];
-  robots: any[] = [];
+  robots$!: Observable<any[]>;
   alerts: any[] = [];
   powerNow = '';
   selectedRobot: any = null;
+   rows = 5;
+  rowsOptions = [5, 10, 20].map(v => ({ label: String(v), value: v }));
   // exportLinks = [
   //   { label: 'robots.csv', url: '/api/export/robots.csv' },
   //   { label: 'chargers.csv', url: '/api/export/chargers.csv' },
@@ -71,7 +72,14 @@ export class RobotListComponent implements OnInit {
       this.loadAlertsAndPower()
     ]);
   }
+  onRowsPerPageChange(val: number, table: any) {
+    this.rows = val;
+    table.first = 0;
+    table.rows = val;
+    table.reset();
+  }
 
+  goToDetails(id:string){}
   // async j(path: string): Promise<any> {
   //   try {
   //     return await this.http.get(`${this.baseUrl}${path}`).toPromise();
@@ -176,7 +184,7 @@ export class RobotListComponent implements OnInit {
   async loadRobots() {
     const d: any = await this.fleetService.get('/api/robots');
     this.zone.run(() => {
-      this.robots = d?.robots ?? [];
+      this.robots$ = d?.robots ?? [];
       this.cdr.markForCheck();
     });
   }
