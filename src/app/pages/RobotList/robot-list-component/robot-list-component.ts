@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { environment } from '../../../../environments/environment';
 import { FleetService } from '../../../shared/services/fleet-service';
 import { SharedModule } from '../../../shared/modules/shared-module';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-robot-list-component',
@@ -15,6 +16,7 @@ import { SharedModule } from '../../../shared/modules/shared-module';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RobotListComponent implements OnInit {
+  @ViewChild('robotTable') robotTable!: Table;
   baseUrl = environment.battmanApiUrl + '/battman-api';
   kpis = [
     { label: 'Total Robots', value: '–' },
@@ -28,8 +30,8 @@ export class RobotListComponent implements OnInit {
   alerts: any[] = [];
   powerNow = '';
   selectedRobot: any = null;
-  rows = 5;
-  rowsOptions = [5, 10, 20].map(v => ({ label: String(v), value: v }));
+  rows = 20;
+  rowsOptions = [20, 50, 100].map(v => ({ label: String(v), value: v }));
 
   constructor(
     private http: HttpClient,
@@ -108,5 +110,21 @@ export class RobotListComponent implements OnInit {
 
   fmtDate(s: string) {
     return new Date(s).toLocaleString();
+  }
+  onGlobalFilter(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.robotTable.filterGlobal(input.value, 'contains');
+  }
+  robotStateSeverity(state: any): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | null | undefined {
+    switch (state) {
+      case 'active':
+        return "success";
+      case 'charging':
+        return "warn";
+      case 'idle':
+        return "danger"
+    }
+
+    return undefined;
   }
 }
