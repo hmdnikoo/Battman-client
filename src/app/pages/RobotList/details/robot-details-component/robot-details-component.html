@@ -4,3 +4,23 @@
       <canvas id="robotTelemetryChart" height="200"></canvas>
     </p-card>
   </div>
+
+  <div class="grid grid-cols-12 gap-4">
+  <p-card class="col-span-9">
+    <h3 class="font-semibold mb-2">SOH – Past / Current / Forecast</h3>
+
+    <div class="flex gap-4 mb-3">
+      <label class="flex items-center gap-2">
+        <input type="checkbox" [(ngModel)]="showPast" (change)="toggleDataset('past')" />
+        Past SOH (before optimization)
+      </label>
+
+      <label class="flex items-center gap-2">
+        <input type="checkbox" [(ngModel)]="showForecast" (change)="toggleDataset('forecast')" />
+        AI Forecast
+      </label>
+    </div>
+
+    <canvas id="sohChart" height="200"></canvas>
+  </p-card>
+</div>
